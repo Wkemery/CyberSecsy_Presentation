@@ -1,0 +1,99 @@
+﻿Asymmetric Key Encryption
+       Asymmetric vs. Symmetric (briefly)
+       Asymmetric:
+            2 keys where both are needed to encrypt and decrypt data, but only one is 
+            needed to encrypt
+            slower
+            don't need shared secret
+       Symmetric: 
+            1 key that can encrypt and decrypt data
+            shared secret
+            faster 
+        simple Math behind it
+        principles
+            Prime generation is easy
+            Multiplication is easy
+            factoring is hard (right now...)
+    2 keys (public and private)
+        Who can decrypt what?
+            something encrypted with the public key can ONLY be decrypted with the private
+            key and vice versa.
+        what do i do with my keys?
+            after generating public private key pair, share public key with world hide
+            private key
+    Okay How do I send a message?
+        only 1 set of keys required to just send.
+        2 sets to send and receive.
+            encrypt message with receiver's public key
+            only the private key can decrypt message, which only the receiver has (hopefully)
+    Digital Signing
+        using private key to "sign things"
+        Did this really come from Bob?
+        sender encrypts message with private key.
+            everyone with public key can decrypt the message, but you are assured that
+            only the private key encrypted the message, which again hopefully only the
+            sender has access to
+    Certificate Authorities
+        trusted 3rd party who provides signed public keys
+        How do I know this is really Bob's public key not an attacker's?
+        run into the problem of how do I know this is really X's public key?
+        an attacker can post their public key saying yeah this is google's public key
+        Need a trusted 3rd party to distribute keys. 3 biggest, Comodo Symantec and Godaddy
+
+
+        New problem: How do I know this really came from my trusted CA?
+        signing: CA's will sign the keys that they distribute so people know they really 
+        came from the CA. same/new problem where do you get the CA's public key?
+        These are actually hard coded into web browsers
+
+
+    Use in conjunction with symmetric key encryption?
+        Why do this? speed, assymetric is very slow compared to symmetric
+        exchange a symmetric key using asymmetric key encryption. then use symmetric
+        Procedure
+            Alice wants to send message to Bob
+            Alice generates a symmetric key (session key) K_s
+            Alice encrypts message with K_s
+            Alice encrypts K_s with Bob's public key so only he can decrypt it
+            concatenate encrypted key onto encrypted message
+
+
+            Bob receives package
+            de-concatenates message
+            decrypts K_s with his private key
+            decrypts entire message with K_s
+    use in conjunction with hashing
+        for quicker signing
+        don't sign whole message, just sign hash
+        procedure: pretend they don't want to encrypt message anymore
+            Alice hashes the message
+            Alice encrypts hash with her private key, remember anyone can decrypt
+            alice concatenates message and signed hash, sends package
+
+
+            Bob de-concatenates package
+            Decrypts hash with Alice's public key. this proves it was signed by the real
+            alice
+            bob generates hash of the message
+            bob compares the two hashes.
+            if they are the same, bob knows the message was unchanged and definitely came
+            from alice
+
+
+    putting it all together for super secure communication
+        procedure
+            Alice hashes the message. 
+            signs the message, encrypts hash with her private key
+            concatenates message and signature together
+            
+            Alice generates a session key
+            encrypts the entire output from the first part with K_s
+            Encrypts K_s with Bobs public key.
+            concatenates encrypted key and encrypted package together, sends
+
+
+        example is PGP
+    Implementations: //here is where we can have more complicated math
+        Rivest Shamir Adleman RSA
+        Elliptic Curve Cryptography ECC
+        Digital Signature Algorithm DSA
